@@ -1,0 +1,183 @@
+{
+  "nivel": "MENU", 
+  "shapes": {
+    "PIXEL": [
+      [
+        [
+          1
+        ]
+      ]
+    ]
+  }, 
+  "tipo_juego": "SNAKE", 
+  "shapes_geom": {
+    "PIXEL": "CIRCULAR"
+  }, 
+  "config": {
+    "grid_size": [
+      18, 
+      18
+    ]
+  }, 
+  "events": {
+    "ON_KEY_DOWN": [
+      {
+        "params": [], 
+        "accion": "SET_DIRECTION", 
+        "objeto": "DOWN"
+      }
+    ], 
+    "ON_EAT_FOOD": [
+      {
+        "params": [], 
+        "accion": "INCREASE_SCORE", 
+        "objeto": "10"
+      }, 
+      {
+        "params": [
+          "1"
+        ], 
+        "accion": "GROW", 
+        "objeto": "PLAYER"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "FOOD"
+      }
+    ], 
+    "ON_KEY_RIGHT": [
+      {
+        "params": [], 
+        "accion": "SET_DIRECTION", 
+        "objeto": "RIGHT"
+      }
+    ], 
+    "ON_TICK": [
+      {
+        "params": [
+          "FORWARD"
+        ], 
+        "accion": "MOVE", 
+        "objeto": "PLAYER"
+      }
+    ], 
+    "ON_COLLISION_CLOUD": [
+      {
+        "params": [], 
+        "accion": "SET_SCORE", 
+        "objeto": "0"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "CLOUD"
+      }
+    ], 
+    "ON_COLLISION_WALL": [
+      {
+        "params": [], 
+        "accion": "GAME_OVER", 
+        "objeto": null
+      }
+    ], 
+    "ON_COLLISION_SELF": [
+      {
+        "params": [], 
+        "accion": "GAME_OVER", 
+        "objeto": null
+      }
+    ], 
+    "ON_START": [
+      {
+        "params": [
+          [
+            9, 
+            9
+          ]
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "PLAYER"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "FOOD"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "POISON"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "CLOUD"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "STAR"
+      }
+    ], 
+    "ON_COLLISION_STAR": [
+      {
+        "params": [], 
+        "accion": "SET_INVULNERABLE", 
+        "objeto": null
+      }, 
+      {
+        "params": [], 
+        "accion": "INCREASE_SCORE", 
+        "objeto": "20"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "STAR"
+      }
+    ], 
+    "ON_KEY_UP": [
+      {
+        "params": [], 
+        "accion": "SET_DIRECTION", 
+        "objeto": "UP"
+      }
+    ], 
+    "ON_COLLISION_POISON": [
+      {
+        "params": [], 
+        "accion": "DECREASE_SCORE", 
+        "objeto": "5"
+      }, 
+      {
+        "params": [
+          "RANDOM"
+        ], 
+        "accion": "SPAWN", 
+        "objeto": "POISON"
+      }
+    ], 
+    "ON_KEY_LEFT": [
+      {
+        "params": [], 
+        "accion": "SET_DIRECTION", 
+        "objeto": "LEFT"
+      }
+    ]
+  }
+}

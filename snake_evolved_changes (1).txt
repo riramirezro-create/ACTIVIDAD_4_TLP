@@ -1,0 +1,97 @@
+================================================================================
+INFORME DE CAMBIOS: PROYECTO SNAKE EVOLVED
+================================================================================
+snake_evolved_changes.txt
+
+
+1. EVOLUCIÓN DE LA GRAMÁTICA
+--------------------------------------------------------------------------------
+El paso de snake.bnf a snake_evolved.bnf representa una expansión sintáctica y 
+semántica significativa en el Lenguaje de Dominio Específico (DSL) utilizado 
+para compilar los niveles. A continuación se desglosan las modificaciones 
+estructurales:
+
+A. Estructura de y Soporte de Niveles
+- Modificación en <programa>: Se modificó la regla inicial para permitir 
+  opcionalmente la declaración de un nivel de dificultad mediante el token <nivel>.
+- Nueva Regla <nivel>: Se introdujo soporte para parametrizar la dificultad 
+  del juego directamente desde el archivo de configuración, soportando tres 
+  estados discretos: BABY, ENTUSIASTA y NYAN_CAT.
+
+B. Extensión de la Geometría Visual
+- Modificación en <definicion_shape>: La gramática original limitaba la 
+  definición de una entidad a una matriz rectangular implícita. La nueva 
+  gramática introduce el modificador AS <geometria> para desligar la lógica 
+  de colisión del renderizado puramente cuadrado, permitiendo primitivas 
+  como CIRCULAR.
+
+C. Enriquecimiento de Eventos y Acciones
+- Nuevos Eventos: Se añadieron tokens asíncronos para responder a las nuevas 
+  dinámicas del mapa: COLLISION_POISON, COLLISION_CLOUD, y COLLISION_STAR.
+- Generalización de Spawn y Puntuación: Se reemplazó la acción fija de comida 
+  por una regla generalizada. Además, el sistema de puntuación ahora soporta 
+  decrementos explícitos (DECREASE_SCORE) y reajustes absolutos (SET_SCORE).
+- Gestión de Estado: Se agregaron instrucciones para alterar las propiedades 
+  físicas de la serpiente: SET_INVULNERABLE y REMOVE_INVULNERABLE.
+
+2. MODIFICACIONES EN EL SCRIPT DEL JUEGO (.brick)
+--------------------------------------------------------------------------------
+La implementación de la nueva gramática se refleja directamente en el archivo 
+de configuración del juego, pasando de un script básico a uno multipropósito.
+Las modificaciones en el archivo .brick incluyen:
+
+- Declaración de Nivel: Inclusión de la instrucción LEVEL MENU al inicio 
+  del archivo para activar la selección dinámica de dificultad.
+- Modificación de Geometría: Actualización de la entidad principal mediante 
+  la instrucción DEFINE SHAPE PIXEL AS CIRCULAR.
+- Expansión del Evento ON START: Además de PLAYER y FOOD, ahora se inicializan 
+  aleatoriamente POISON, CLOUD y STAR.
+- Lógica de Nuevos Obstáculos y Power-Ups:
+  * ON COLLISION_POISON: Penaliza al jugador con DECREASE_SCORE 5.
+  * ON COLLISION_CLOUD: Funciona como obstáculo grave, aplicando SET_SCORE 0.
+  * ON COLLISION_STAR: Otorga el buff SET_INVULNERABLE y premia con 
+    INCREASE_SCORE 20.
+
+3. MODIFICACIONES EN EL COMPILADOR (compiler.py)
+--------------------------------------------------------------------------------
+Para dar soporte a la nueva gramática BNF y al script .brick, el parser 
+fue reestructurado:
+
+- Expansión del Árbol de Sintaxis Abstracta (AST): La estructura base del 
+  diccionario self.ast fue ampliada. Pasó de contener solo tipo_juego, config, 
+  shapes y events, a incluir el estado por defecto "nivel": "BABY" y un nuevo 
+  diccionario "shapes_geom": {} destinado a almacenar las propiedades geométricas.
+- Parseo de Geometría Personalizada: En el método parsear_shape, se implementó 
+  una evaluación condicional para detectar la palabra clave AS. El compilador 
+  asigna la geometría al diccionario shapes_geom en el archivo .json de salida.
+- Procesamiento de Comandos de Estado Simple: La lista de comandos_validos fue 
+  extendida en parsear_evento para evitar errores de sintaxis con las nuevas 
+  acciones (ej. SET_INVULNERABLE), procesándolas sin parámetros adicionales.
+
+4. COMPORTAMIENTO LÓGICO Y RENDERIZADO (runtime.py)
+--------------------------------------------------------------------------------
+El motor en Python sufrió una refactorización para procesar el nuevo .json 
+compilado y manejar la lógica en tiempo real:
+
+A. Sistema de Menú y Dificultad Dinámica
+- Menú Inicial: Se implementó mostrar_menu_dificultad() para interceptar el 
+  inicio del juego si el nivel solicitado es "MENU".
+- Gestión de Velocidad (Tick Rate): Se ajusta dinámicamente según el nivel: 
+  BABY (100ms), ENTUSIASTA (70ms) y NYAN_CAT (50ms).
+
+B. Motor de Geometría y Renderizado Condicional
+- Primitivas de Tkinter: El método dibujar_celda() fue expandido para aceptar el 
+  parámetro geometria, utilizando create_oval para CIRCULAR, create_polygon para 
+  TRIANGULAR, y manteniendo create_rectangle para objetos clásicos.
+- Estética NYAN_CAT: Para el nivel más difícil, se programó un renderizado 
+  especial condicional utilizando polígonos complejos y una paleta arcoíris.
+
+C. Lógica de Colisiones y Estado "Power-Up"
+- Temporizador de Invulnerabilidad: Se creó self.ticks_invulnerabilidad. Mientras 
+  está activo tras chocar con STAR, el HUD advierte al jugador.
+- Modificación de Físicas (Screen Wrap): Si el jugador es invulnerable, las 
+  colisiones contra los bordes aplican un efecto Pac-Man (% ancho/alto) en 
+  lugar de GAME_OVER.
+- Interacción: La serpiente ignora el canibalismo y los obstáculos fatales 
+  si está invulnerable.
+================================================================================
