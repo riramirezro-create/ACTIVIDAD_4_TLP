@@ -11,7 +11,7 @@ semántica significativa en el Lenguaje de Dominio Específico (DSL) utilizado
 para compilar los niveles. A continuación se desglosan las modificaciones 
 estructurales:
 
-A. Estructura de y Soporte de Niveles
+A. Estructura y Soporte de Niveles
 - Modificación en <programa>: Se modificó la regla inicial para permitir 
   opcionalmente la declaración de un nivel de dificultad mediante el token <nivel>.
 - Nueva Regla <nivel>: Se introdujo soporte para parametrizar la dificultad 
